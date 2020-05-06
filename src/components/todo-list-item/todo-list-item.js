@@ -1,32 +1,8 @@
-import React, { Component } from "react";
+import React from "react";
 import './todo-list-item.css';
 
-export default class ListItem extends Component {
+const ListItem = ({ value, onDeleted, onToggleDone, onToggleImportant, done, important }) => {
 
-    state = {
-        done: false,
-        important: false
-    }
-
-    onLabelClick = () => {
-        this.setState((state) => {
-            return {
-                done: !state.done
-            }
-        })
-    }
-
-    onMarkImportant = () => {
-        this.setState((state) => {
-            return {
-                important: ! state.important
-            }
-        })
-    }
-
-    render () {
-        const { value, onDeleted } = this.props;
-        const { done, important } = this.state;
         let classNames = 'todo-list-item';
         if (done) {
             classNames += ' done';
@@ -38,11 +14,11 @@ export default class ListItem extends Component {
 
         return (<span className={classNames}>
                 <span className='todo-list-item-label'
-                      onClick={ this.onLabelClick }>
+                      onClick={ onToggleDone }>
                       {value}
                 </span>
                   <button type="button"
-                          onClick={this.onMarkImportant}
+                          onClick={onToggleImportant}
                           className="btn btn-outline-danger btn-sm float-right">
                     <i className="fa fa-flag" aria-hidden="true"/>
                   </button>
@@ -54,4 +30,5 @@ export default class ListItem extends Component {
                   </button>
             </span>);
     }
-}
+
+    export default ListItem;

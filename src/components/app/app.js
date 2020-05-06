@@ -9,12 +9,22 @@ import AddItem from "../add-item";
 
 
 export default class App extends Component {
+    keyId = 100;
     state = {
         toDoData: [
-            {id: 1, value:'Drink tea', important: false},
-            {id: 2, value:'Learn React', important: true},
-            {id: 3, value:'Build awesome React Apps', important: true}
+            this.createToDoItem('Drink tea'),
+            this.createToDoItem('Learn React!'),
+            this.createToDoItem('Build awesome React Apps')
         ]
+    }
+
+    createToDoItem (value) {
+        return {
+            id: this.keyId++,
+            value,
+            important: false,
+            done: false
+        }
     }
 
     deleteItem = (id) => {
@@ -31,29 +41,56 @@ export default class App extends Component {
     }
 
     addItem = (text) => {
-        let newItem = {
-            id: this.state.toDoData.length + 1,
-            value: text,
-            important: false
-        }
+        let newItem = this.createToDoItem(text);
         this.setState((state) => {
             let newData = [...this.state.toDoData, newItem]
             return {
                 toDoData: newData
             }
         })
+    }
 
+    toggleProperty (arr, id, propName) {
+        const indx = arr.findIndex((el) => el.id === id);
+        const oldItem = arr[indx];
+        const newItem = {...oldItem, [propName]: !oldItem[propName]};
+        return [
+            ...arr.slice(0, indx),
+            newItem,
+            ...arr.slice(indx +1)
+        ];
+    }
+
+    onToggleImportant = (id) => {
+        this.setState(({toDoData}) => {
+            return {
+                toDoData: this.toggleProperty(toDoData, id, 'important')
+            }
+        })
+    }
+
+    onToggleDone = (id) => {
+        this.setState(({toDoData}) => {
+            return {
+                toDoData: this.toggleProperty(toDoData, id, 'done')
+            }
+        })
     }
 
     render() {
+        const {toDoData} = this.state;
+        const doneItems = toDoData.filter((e) => e.done).length;
+        const toDoItems = toDoData.length - doneItems;
         return (<div className='todo-app'>
-                <AppHeader todo={3} end={2}/>
+                <AppHeader todo={toDoItems} end={doneItems}/>
                 <div className='top-panel d-flex'>
                     <SearchPanel />
                     <ItemStatusFilter />
                 </div>
-                <ToDoList todos={this.state.toDoData}
-                          onDeleted={this.deleteItem}/>
+                <ToDoList todos={toDoData}
+                          onDeleted={this.deleteItem}
+                          onToggleImportant={this.onToggleImportant}
+                          onToggleDone={this.onToggleDone}/>
                           <AddItem addItem={this.addItem}/>
             </div>
         )
