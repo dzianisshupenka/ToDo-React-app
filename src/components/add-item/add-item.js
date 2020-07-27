@@ -20,6 +20,7 @@ export default class AddItem extends Component {
         this.setState({
             label: ''
         })
+        localStorage.setItem('last-item', this.state.label)
     }
     render() {
         return <form className='add-item-form d-flex'
